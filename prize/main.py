@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 设置字体为微软雅黑
 plt.rcParams['axes.unicode_minus'] = False  # 正确显示负号
 
@@ -91,11 +92,31 @@ def simulate_with_varying_prize_zero(prize_one, prize_two, prize_three, prize_fo
 
     return x_values, y_values
 
+def simulate_3d(prize_one, prize_two, prize_three, prize_four, start_zero, end_zero, start_num, end_num, simulations):
+    x_values, y_values, z_values = [], [], []
+
+    for prize_zero in range(start_zero, end_zero + 1):
+        for prize_num in range(start_num, end_num + 1):
+            # 计算平均剩余奖品比例
+            avg_percentage = average_remaining_percentage(prize_one, prize_two, prize_three, prize_four, prize_zero,
+                                                          prize_num, simulations)
+
+            # 记录结果
+            x_values.append(prize_zero)
+            y_values.append(prize_num)
+            z_values.append(avg_percentage)
+
+    return x_values, y_values, z_values
+
+
+
+
+
 
 # 设置奖品数量
 prize_one = 2
 prize_two = 25
-prize_three = 42
+prize_three = 59
 prize_four = 48
 prize_zero = 2000  # 参与奖
 prize_num = 1200  # 抽奖次数
@@ -103,14 +124,17 @@ simulations = 10  # 重复模拟次数
 
 
 # 进行模拟
-x_values, y_values = simulate_with_varying_prize_zero(prize_one, prize_two, prize_three, prize_four, prize_num, 1000, 2000)
+x_values, y_values, z_values = simulate_3d(prize_one, prize_two, prize_three, prize_four, 500, 1000, 600, 1000, simulations)
 
-# 绘制图像
-plt.plot(x_values, y_values)
-plt.xlabel('参与奖数量')
-plt.ylabel('剩余奖品比例')
-plt.title('1200人次抽奖情况下 剩余奖品比例 和 参与奖关系曲线图')
+
+# 绘制3D图像
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(x_values, y_values, z_values, c=z_values, cmap='viridis')
+ax.set_xlabel('参与奖数量')
+ax.set_ylabel('抽奖次数')
+ax.set_zlabel('平均剩余奖品比例')
+plt.title('平均剩余奖品比例 与 参与奖数量 和 抽奖次数关系图')
 plt.show()
-
 
 
